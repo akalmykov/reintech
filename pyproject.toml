@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "soda-agent"
+version = "0.1.0"
+description = ""
+authors = ["akalmykov <alexey.kalmykoff@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "soda_agent" }]
+
+[tool.poetry.dependencies]
+python = "^3.10.11"
+driftpy = { git = "https://github.com/PolytonHQ/driftpy.git", rev = "bugfix" }
+langchain-core = "^0.3.24"
+langgraph = "^0.2.58"
+python-dotenv = "^1.0.1"
+langchain-openai = "^0.2.12"
+pandas = "^2.2.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
