@@ -39,35 +39,38 @@ class BacktestingTool(BaseTool):
         except Exception as e:
             raise ValueError(f"Error loading strategy: {str(e)}")
 
-    strategy_code: str = Field(..., description="Python code of the strategy function")
-    data_file: str = Field(..., description="Path to the historical data CSV file")
+    # strategy_code: str = Field(..., description="Python code of the strategy function")
+    # data_file: str = Field(..., description="Path to the historical data CSV file")
 
-    def __init__(self, strategy_code: str, data_file: str):
-        super().__init__(strategy_code=strategy_code, data_file=data_file)
+    def __init__(self):
+        # super().__init__(strategy_code=strategy_code, data_file=data_file)
+        super().__init__()
 
-    def _run(self, tool_input: str) -> str:
+    def _run(self, strategy_code: str, data_file: dict) -> str:
         """Run backtest using the stored strategy code and data file.
 
         Returns:
             str: JSON string with backtest results
         """
         try:
+            # strategy_code = input_dict.get("strategy_code")
+            # data_file = input_dict.get("data_file")
 
-            if not self.strategy_code or not self.data_file:
+            if not strategy_code or not data_file:
                 return "Error: Both strategy_code and data_file are required"
 
             # Load the strategy function
-            strategy_fn = self._load_strategy(self.strategy_code)
+            strategy_fn = self._load_strategy(strategy_code)
 
-            metrics, positions = backtest_strategy(self.data_file, strategy_fn)
+            metrics, positions = backtest_strategy(data_file, strategy_fn)
             return str(metrics)
 
         except Exception as e:
             return f"Error running backtest: {str(e)}"
 
-    async def _arun(self, tool_input: str) -> str:
+    async def _arun(self, strategy_code: str, data_file: str) -> str:
         """Async version of _run"""
-        return self._run(tool_input)
+        return self._run(strategy_code, data_file)
 
 
 # Example usage:
@@ -134,9 +137,14 @@ def strategy(
     """
     print(sample_strategy_code)
     # Run the backtest
-    backtest_tool = BacktestingTool(sample_strategy_code, "./data/perp_BTC_15_2024.csv")
+    backtest_tool = BacktestingTool()
+    # BacktestingTool(sample_strategy_code, "./data/perp_BTC_15_2024.csv")
+    input_dict = {
+        "strategy_code": sample_strategy_code,
+        "data_file": "./data/perp_BTC_15_2024.csv",
+    }
+    result = await backtest_tool.arun(input_dict)
 
-    result = await backtest_tool.arun("")
     print(result)
 
 

@@ -2,6 +2,10 @@ from dotenv import load_dotenv
 
 import sys
 import os
+import pandas as pd
+
+# Option 1: Suppress only the SettingWithCopyWarning
+pd.options.mode.chained_assignment = None
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -9,6 +13,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tools.sol_balance import SolanaBalanceTool
 from tools.drift_tools import DriftCandleDataTool
 from tools.backtesting_tool import BacktestingTool
+from tools.drift_place_order import DriftOrderTool
 
 
 load_dotenv()
@@ -22,7 +27,12 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 
 model = ChatOpenAI(model="gpt-4o-mini")
-tools = [SolanaBalanceTool(), DriftCandleDataTool(), BacktestingTool()]
+tools = [
+    SolanaBalanceTool(),
+    DriftCandleDataTool(),
+    BacktestingTool(),
+    DriftOrderTool(),
+]
 # model = model.bind_tools(tools)
 
 
@@ -139,11 +149,20 @@ def golden_cross_death_cross_strategy(
     return None                        
 ```
             Don't change the function name. Make sure that all Python imports are preserved.
-    
+            Don't show the code of the strategy to the user, just confirm that the strategy is implemented.
+            After the strategy is implemented, ask a user if they want to backtest it on the historical data.
+            Use BacktestingTool to test the strategy it. Pass data_file that was returned by DriftCandleDataTool.
+            Report the results of the backtesting and give your comments on it.
+            
+            If a user asks to place and order, use DriftOrderTool. Ask for an amount, symbol to trade and long/short position.
+            If the trade is executed successful, report the transaction signature returned by DriftOrderTool.
+            Placing an order can happen without any prior.
+                        
             You have access to the following tools:
             - SolanaBalanceTool: Check the SOL balance of a wallet address.
             - DriftCandleDataTool: Download historical candle data from Drift exchange.
             - BacktestingTool: Backtesting on a strategy on historical data.
+            - DriftOrderTool: placing orders on Drift exchange.
             """
     ),
 )

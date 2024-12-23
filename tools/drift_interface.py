@@ -11,13 +11,13 @@ from driftpy.types import *
 from driftpy.constants.numeric_constants import BASE_PRECISION, PRICE_PRECISION
 
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
 url = "https://api.mainnet-beta.solana.com"
 connection = AsyncClient(url, timeout=100000)
 
-keypair_file = os.path.expanduser("./drift-keypair.json")
+keypair_file = os.path.expanduser("./keypair.json")
 keypair = load_keypair(keypair_file)
 wallet = Wallet(keypair)
 drift_client = DriftClient(
@@ -55,13 +55,12 @@ async def deposit(amount, spot_market_index=0, sub_account_id=0):
     logging.info(tx_sig)
 
 
-# 0.1
 async def place_order(
     amount, direction=PositionDirection.Long(), market_index=0, sub_account_id=0
 ):
+    await drift_client.subscribe()
     drift_client.switch_active_user(sub_account_id=sub_account_id)
 
-    # place order to long 1 SOL-PERP @ $21.88 (post only)
     order_params = OrderParams(
         order_type=OrderType.Market(),
         base_asset_amount=drift_client.convert_to_perp_precision(amount),
