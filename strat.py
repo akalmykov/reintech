@@ -96,14 +96,18 @@ if __name__ == "__main__":
     # stransform_csv("./15.csv", "./15_transformed.csv")
 
     # Run on the keyless exchange, starting at 100k
-    exchange = blankly.KeylessExchange(price_reader=PriceReader('./15_transformed.csv', 'BTC-USD'))
+    exchange = blankly.KeylessExchange(
+        price_reader=PriceReader("./15_transformed.csv", "BTC-USD")
+    )
 
     # Use our strategy helper
     strategy = blankly.Strategy(exchange)
 
     # Make the price event function above run every day
-    strategy.add_price_event(price_event, symbol='BTC-USD', resolution='15m', init=init)
+    strategy.add_price_event(price_event, symbol="BTC-USD", resolution="15m", init=init)
 
     # Backtest the strategy
-    results = strategy.backtest(start_date=1704067200, end_date=1733442300, initial_values={'USD': 10000})
+    results = strategy.backtest(
+        start_date=1704067200, end_date=1733442300, initial_values={"USD": 10000}
+    )
     print(results)

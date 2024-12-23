@@ -112,7 +112,7 @@ class DriftCandleDataTool(BaseTool):
                 # Load and validate CSV
                 df = pd.read_csv(output_path)
                 row_count = len(df)
-                return f"Successfully downloaded {row_count} candles to {output_path}"
+                return f"Successfully downloaded historical data for {base_asset_symbol} with resolution {resolution} for year {year} to {output_path}"
             else:
                 return f"Error: Downloaded file is empty or invalid"
 
